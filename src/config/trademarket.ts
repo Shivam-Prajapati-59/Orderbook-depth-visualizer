@@ -1,3 +1,5 @@
+import { SymbolMap } from "../adapters/base/types";
+
 export const TRADE_MARKETS = [
   {
     id: 'ETH',
@@ -45,9 +47,12 @@ export const TRADE_MARKETS = [
 
 export type TradeMarket = (typeof TRADE_MARKETS)[number];
 
-export function getTradeMarket(id: string) :TradeMarket | undefined {
+export function getTradeMarket(id: string): TradeMarket | undefined {
   return TRADE_MARKETS.find((market) => market.id === id);
 }
 export function getTradeMarketIds(ids: string[]): TradeMarket[] {
   return ids.map((id) => getTradeMarket(id)).filter((market) => market !== undefined) as TradeMarket[];
 }
+export const HYPERLIQUID_SYMBOL_MAP: SymbolMap = Object.fromEntries(
+  TRADE_MARKETS.map((m) => [m.id, m.hlCoin]),
+);
