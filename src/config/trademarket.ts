@@ -56,3 +56,10 @@ export function getTradeMarketIds(ids: string[]): TradeMarket[] {
 export const HYPERLIQUID_SYMBOL_MAP: SymbolMap = Object.fromEntries(
   TRADE_MARKETS.map((m) => [m.id, m.hlCoin]),
 );
+
+export const LIGHTER_SYMBOL_MAP: SymbolMap = Object.fromEntries(
+  TRADE_MARKETS.map((m) => [m.id, m.id]),
+);
+export const LIGHTER_MARKET_INDEX: Record<string, number> = Object.fromEntries(
+  TRADE_MARKETS.map((m) => [m.id, m.lighterMarketIndex]),
+);
