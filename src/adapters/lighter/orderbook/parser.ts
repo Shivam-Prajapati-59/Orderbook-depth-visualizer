@@ -36,7 +36,7 @@ export class LighterParser {
         }
     }
 
-    // Gets the effective tick size, defaulting to 0.01
+    // Returns the current tick size, falling back to 0.01 if none set
     private effectiveTick(): number {
         return this.venueTick ?? 0.01;
     }
@@ -62,6 +62,8 @@ export class LighterParser {
         this.bids.clear();
         this.asks.clear();
         this.isFirstMessage = true;
+        this.venueTick = null;
+        this.asset = '';
     }
 
     // Processes an incoming Lighter OrderBook payload and returns a normalized snapshot

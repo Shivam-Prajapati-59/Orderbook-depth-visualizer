@@ -36,19 +36,12 @@ export class LighterAdapter extends BaseAdapter {
         return WS_URL;
     }
 
-    // Helper to extract the market index from a channel string (e.g., 'order_book/0')
-    private getMarketIndexFromChannel(channel: string): number | null {
-        if (!channel.startsWith('order_book/')) return null;
-        const indexStr = channel.split('/')[1];
-        const index = parseInt(indexStr, 10);
-        return isNaN(index) ? null : index;
-    }
-
-
     // Automatically called by BaseAdapter when the socket successfully connects
     protected onConnected(): void {
         if (this.currentAsset) {
             this.parser.reset();
+            this.parser.setAsset(this.currentAsset);
+            this.getOrderbookTickSize(this.currentAsset);
             this.sendSubscribe(this.currentAsset);
         }
     }
