@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { ChevronDown } from 'lucide-react';
 import Image from "next/image";
 
@@ -12,9 +12,11 @@ import {
   DropdownMenuTrigger,
 } from '@/src/components/ui/dropdown-menu';
 import { TRADE_MARKETS } from '@/src/config/trademarket';
+import { useMarketStore } from '@/src/features/store/marketStore';
 
 const TradingHeader = () => {
-  const [selectedMarketId, setSelectedMarketId] = useState<string>(TRADE_MARKETS[0].id);
+  const selectedMarketId = useMarketStore((state) => state.selectedMarketId);
+  const setSelectedMarketId = useMarketStore((state) => state.setSelectedMarketId);
 
   const selectedMarket = TRADE_MARKETS.find(m => m.id === selectedMarketId) || TRADE_MARKETS[0];
 
