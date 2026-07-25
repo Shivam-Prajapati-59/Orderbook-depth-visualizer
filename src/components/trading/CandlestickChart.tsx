@@ -11,6 +11,9 @@ import { fetchHyperliquidCandleHistory } from "@/src/adapters/hyperliquid/ohlcv/
 import { HyperliquidCandlesClient } from "@/src/adapters/hyperliquid/ohlcv/candleClient";
 import { fetchCandles } from "@/src/adapters/lighter/ohlcv/fetchCandles";
 import type { OhlcvBar } from "@/src/adapters/hyperliquid/ohlcv/types"; // Both use same structure
+import { fetchPacificaCandleHistory } from "@/src/adapters/pacifica/ohlcv/candleSnapshot";
+import { PacificaCandlesClient } from "@/src/adapters/pacifica/ohlcv/candleClient";
+import { PACIFICA_SYMBOL_MAP } from "@/src/config/trademarket";
 
 const TIMEFRAME_TO_MS: Record<string, number> = {
     '1m': 60 * 1000,
@@ -85,6 +88,7 @@ export default function CandlestickChart() {
         let isMounted = true;
         const abortController = new AbortController();
         let hlClient: HyperliquidCandlesClient | null = null;
+        let pacificaClient: PacificaCandlesClient | null = null;
 
         const loadData = async () => {
             if (!seriesRef.current) return;
@@ -138,6 +142,32 @@ export default function CandlestickChart() {
                             signal: abortController.signal,
                         });
                     }
+                } else if (candleVenue === 'pacifica') {
+                    const pacificaCoin = PACIFICA_SYMBOL_MAP[selectedMarketId] || selectedMarketId;
+
+                    // Fetch historical snapshot
+                    bars = await fetchPacificaCandleHistory({
+                        symbol: pacificaCoin,
+                        interval: timeframe,
+                        start_time: startTime,
+                        end_time: endTime,
+                        signal: abortController.signal,
+                    });
+
+                    // Set up realtime updates
+                    pacificaClient = new PacificaCandlesClient(PACIFICA_SYMBOL_MAP);
+                    pacificaClient.connect(
+                        (realtimeBars) => {
+                            if (!isMounted || !seriesRef.current) return;
+                            for (const bar of realtimeBars) {
+                                seriesRef.current.update(bar as CandlestickData);
+                            }
+                        },
+                        (status) => {
+                            console.log('[Pacifica Candle WS]', status);
+                        }
+                    );
+                    pacificaClient.subscribe(selectedMarketId, timeframe);
                 }
 
                 if (isMounted && seriesRef.current) {
@@ -173,6 +203,9 @@ export default function CandlestickChart() {
             abortController.abort();
             if (hlClient) {
                 hlClient.destroy();
+            }
+            if (pacificaClient) {
+                pacificaClient.destroy();
             }
         };
     }, [selectedMarketId, timeframe, candleVenue]);

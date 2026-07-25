@@ -17,7 +17,7 @@ import { VENUE, VENUE_LABELS } from '@/src/features/constant';
 import { toolbarBtn, toggleItem, toggleStrip } from './lib/chartToolbarStyles';
 import { useOhlcvSettingsStore, type OhlcvTimeframe, type VenueId } from '../store/ohlcvSettingsStore';
 
-const venueOrder: VenueId[] = [VENUE.HYPERLIQUID, VENUE.LIGHTER];
+const venueOrder: VenueId[] = [VENUE.HYPERLIQUID, VENUE.LIGHTER, VENUE.PACIFICA];
 
 const timeframes: { id: OhlcvTimeframe; label: string }[] = [
     { id: '1m', label: '1m' },

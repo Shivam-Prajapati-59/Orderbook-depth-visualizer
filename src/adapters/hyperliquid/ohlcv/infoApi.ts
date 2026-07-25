@@ -36,19 +36,19 @@ export async function postInfo(body: unknown, options?: PostInfoOptions): Promis
         throw new Error(msg);
     }
 
+    let data: unknown;
     try {
-        const data = await readResponseJson(response);
-
-        if (data === null || typeof data !== 'object') {
-            logPipelineError('postHyperliquidInfo.json', new Error('empty response body'));
-            throw new Error('JSON is null or not an object');
-        }
-
-        return data;
+        data = await readResponseJson(response);
     } catch (error) {
         if (isAbortError(error)) throw error;
-        if (error instanceof Error && error.message.startsWith('Hyperliquid /info:')) throw error;
         logPipelineError('postHyperliquidInfo.json', error);
         throw new Error('Hyperliquid /info: invalid JSON response');
     }
+
+    if (data === null || typeof data !== 'object') {
+        logPipelineError('postHyperliquidInfo.json', new Error('empty response body'));
+        throw new Error('Hyperliquid /info: empty response body');
+    }
+
+    return data;
 }
