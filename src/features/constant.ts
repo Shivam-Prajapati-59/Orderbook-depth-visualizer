@@ -3,11 +3,13 @@ import { VenueId } from "./ohlcv/types";
 export const VENUE = {
     HYPERLIQUID: 'hyperliquid',
     LIGHTER: 'lighter',
+    PACIFICA: 'pacifica',
 } as const satisfies Record<string, VenueId>;
 
 export const VENUE_LABELS: Record<VenueId, string> = {
     hyperliquid: 'Hyperliquid',
     lighter: 'Lighter',
+    pacifica: 'Pacifica',
 };
 
 export type VenueDisplayMeta = {
@@ -35,6 +37,14 @@ export const VENUE_DISPLAY: Record<VenueId, VenueDisplayMeta> = {
     logoUrl: 'https://assets.coingecko.com/coins/images/71121/standard/lighter.png?1765888098',
     depthMenuHint: 'Bid · ask',
     websiteUrl: 'https://lighter.xyz',
+  },
+  pacifica: {
+    id: 'pacifica',
+    name: 'Pacifica',
+    shortName: 'PC',
+    logoUrl: 'https://ui-avatars.com/api/?name=Pacifica&background=6366f1&color=fff&size=32',
+    depthMenuHint: 'Bid · ask',
+    websiteUrl: 'https://pacifica.fi',
   },
 };
 
