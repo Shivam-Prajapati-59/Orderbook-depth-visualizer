@@ -1,4 +1,4 @@
-export type VenueId = 'hyperliquid' | 'lighter' | 'pacifica';
+export type VenueId = 'hyperliquid' | 'lighter' | 'pacifica' | 'aster';
 
 export interface VenueMetaData {
   id: VenueId;

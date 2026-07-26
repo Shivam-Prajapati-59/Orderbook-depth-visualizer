@@ -3,7 +3,7 @@ import { VENUE } from '@/src/features/constant';
 
 export type OhlcvTimeframe = '1m' | '5m' | '15m' | '1h';
 export type OhlcvChartMode = 'candles' | 'compare';
-export type VenueId = 'hyperliquid' | 'lighter' | 'pacifica';
+export type VenueId = 'hyperliquid' | 'lighter' | 'pacifica' | 'aster';
 
 interface OhlcvSettings {
     timeframe: OhlcvTimeframe;

@@ -1,15 +1,17 @@
 import { VenueId } from "./ohlcv/types";
 
 export const VENUE = {
-    HYPERLIQUID: 'hyperliquid',
-    LIGHTER: 'lighter',
-    PACIFICA: 'pacifica',
+  HYPERLIQUID: 'hyperliquid',
+  LIGHTER: 'lighter',
+  PACIFICA: 'pacifica',
+  ASTER: 'aster',
 } as const satisfies Record<string, VenueId>;
 
 export const VENUE_LABELS: Record<VenueId, string> = {
-    hyperliquid: 'Hyperliquid',
-    lighter: 'Lighter',
-    pacifica: 'Pacifica',
+  hyperliquid: 'Hyperliquid',
+  lighter: 'Lighter',
+  pacifica: 'Pacifica',
+  aster: 'Aster',
 };
 
 export type VenueDisplayMeta = {
@@ -45,6 +47,14 @@ export const VENUE_DISPLAY: Record<VenueId, VenueDisplayMeta> = {
     logoUrl: 'https://ui-avatars.com/api/?name=Pacifica&background=6366f1&color=fff&size=32',
     depthMenuHint: 'Bid · ask',
     websiteUrl: 'https://pacifica.fi',
+  },
+  aster: {
+    id: 'aster',
+    name: 'Aster',
+    shortName: 'AT',
+    logoUrl: 'https://ui-avatars.com/api/?name=Aster&background=f97316&color=fff&size=32',
+    depthMenuHint: 'Bid · ask',
+    websiteUrl: 'https://asterdex.com',
   },
 };
 

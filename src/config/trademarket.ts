@@ -7,7 +7,7 @@ export const TRADE_MARKETS = [
     hlCoin: 'ETH',
     lighterMarketIndex: 0,
     pacificaSymbol: 'ETH',
-
+    asterSymbol: 'ETHUSDT',
     iconUrl: 'https://assets.coincap.io/assets/icons/eth@2x.png',
   },
   {
@@ -16,7 +16,7 @@ export const TRADE_MARKETS = [
     hlCoin: 'BTC',
     lighterMarketIndex: 1,
     pacificaSymbol: 'BTC',
-
+    asterSymbol: 'BTCUSDT',
     iconUrl: 'https://assets.coincap.io/assets/icons/btc@2x.png',
   },
   {
@@ -25,6 +25,7 @@ export const TRADE_MARKETS = [
     hlCoin: 'SOL',
     lighterMarketIndex: 2,
     pacificaSymbol: 'SOL',
+    asterSymbol: 'SOLUSDT',
     iconUrl: 'https://assets.coincap.io/assets/icons/sol@2x.png',
   },
   {
@@ -33,6 +34,7 @@ export const TRADE_MARKETS = [
     hlCoin: 'HYPE',
     lighterMarketIndex: 24,
     pacificaSymbol: 'HYPE',
+    asterSymbol: 'HYPEUSDT',
     iconUrl: 'https://assets.coingecko.com/coins/images/50882/small/hyperliquid.jpg',
   },
   {
@@ -41,6 +43,7 @@ export const TRADE_MARKETS = [
     hlCoin: 'XRP',
     lighterMarketIndex: 7,
     pacificaSymbol: 'XRP',
+    asterSymbol: 'XRPUSDT',
     iconUrl: 'https://assets.coincap.io/assets/icons/xrp@2x.png',
   },
   {
@@ -49,6 +52,7 @@ export const TRADE_MARKETS = [
     hlCoin: 'AAVE',
     lighterMarketIndex: 27,
     pacificaSymbol: 'AAVE',
+    asterSymbol: 'AAVEUSDT',
     iconUrl: 'https://assets.coincap.io/assets/icons/aave@2x.png',
   },
 ] as const;
@@ -74,3 +78,6 @@ export const LIGHTER_MARKET_INDEX: Record<string, number> = Object.fromEntries(
 export const PACIFICA_SYMBOL_MAP: SymbolMap = Object.fromEntries(
   TRADE_MARKETS.map((m) => [m.id, m.pacificaSymbol]),
 );
+export const ASTER_SYMBOL_MAP: SymbolMap = Object.fromEntries(
+  TRADE_MARKETS.map((m) => [m.id, m.asterSymbol]),
+);

@@ -13,7 +13,9 @@ import { fetchCandles } from "@/src/adapters/lighter/ohlcv/fetchCandles";
 import type { OhlcvBar } from "@/src/adapters/hyperliquid/ohlcv/types"; // Both use same structure
 import { fetchPacificaCandleHistory } from "@/src/adapters/pacifica/ohlcv/candleSnapshot";
 import { PacificaCandlesClient } from "@/src/adapters/pacifica/ohlcv/candleClient";
-import { PACIFICA_SYMBOL_MAP } from "@/src/config/trademarket";
+import { PACIFICA_SYMBOL_MAP, ASTER_SYMBOL_MAP } from "@/src/config/trademarket";
+import { fetchAsterCandleHistory } from "@/src/adapters/aster/ohlcv/candleSnapshot";
+import { AsterCandlesClient } from "@/src/adapters/aster/ohlcv/candleClient";
 
 const TIMEFRAME_TO_MS: Record<string, number> = {
     '1m': 60 * 1000,
@@ -89,6 +91,7 @@ export default function CandlestickChart() {
         const abortController = new AbortController();
         let hlClient: HyperliquidCandlesClient | null = null;
         let pacificaClient: PacificaCandlesClient | null = null;
+        let asterClient: AsterCandlesClient | null = null;
 
         const loadData = async () => {
             if (!seriesRef.current) return;
@@ -168,6 +171,31 @@ export default function CandlestickChart() {
                         }
                     );
                     pacificaClient.subscribe(selectedMarketId, timeframe);
+                } else if (candleVenue === 'aster') {
+                    // Fetch historical snapshot from Aster klines REST API
+                    const asterSymbol = ASTER_SYMBOL_MAP[selectedMarketId] ?? selectedMarketId;
+                    bars = await fetchAsterCandleHistory({
+                        symbol: asterSymbol,
+                        interval: timeframe,
+                        startTime: startTime,
+                        endTime: endTime,
+                        signal: abortController.signal,
+                    });
+
+                    // Set up real-time updates via Aster kline WebSocket stream
+                    asterClient = new AsterCandlesClient(ASTER_SYMBOL_MAP);
+                    asterClient.connect(
+                        (realtimeBars) => {
+                            if (!isMounted || !seriesRef.current) return;
+                            for (const bar of realtimeBars) {
+                                seriesRef.current.update(bar as CandlestickData);
+                            }
+                        },
+                        (status) => {
+                            console.log('[Aster Candle WS]', status);
+                        }
+                    );
+                    asterClient.subscribe(selectedMarketId, timeframe);
                 }
 
                 if (isMounted && seriesRef.current) {
@@ -206,6 +234,9 @@ export default function CandlestickChart() {
             }
             if (pacificaClient) {
                 pacificaClient.destroy();
+            }
+            if (asterClient) {
+                asterClient.destroy();
             }
         };
     }, [selectedMarketId, timeframe, candleVenue]);

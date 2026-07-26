@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import { HyperliquidAdapter } from "@/src/adapters/hyperliquid/orderbook/client";
 import { LighterAdapter } from "@/src/adapters/lighter/orderbook/client";
 import { PacificaAdapter } from "@/src/adapters/pacifica/orderbook/client";
+import { AsterAdapter } from "@/src/adapters/aster/orderbook/client";
 import { NormalizedOrderBook, VenueConnectionState, OrderBookLevel } from "@/src/adapters/base/types";
 import { useMarketStore } from "@/src/features/store/marketStore";
 
@@ -94,11 +95,15 @@ export default function Orderbook() {
   const [pacificaStatus, setPacificaStatus] = useState<string>("idle");
   const [pacificaBook, setPacificaBook] = useState<NormalizedOrderBook | null>(null);
 
+  const [asterStatus, setAsterStatus] = useState<string>("idle");
+  const [asterBook, setAsterBook] = useState<NormalizedOrderBook | null>(null);
+
   useEffect(() => {
     // 1. Instantiate adapters
     const hlAdapter = new HyperliquidAdapter();
     const lighterAdapter = new LighterAdapter();
     const pacificaAdapter = new PacificaAdapter();
+    const asterAdapter = new AsterAdapter();
 
     // 2. Connect Hyperliquid
     hlAdapter.connect(
@@ -118,12 +123,19 @@ export default function Orderbook() {
       (newStatus: VenueConnectionState) => setPacificaStatus(newStatus.status)
     );
 
-    // 5. Subscribe to the selected asset
+    // 5. Connect Aster
+    asterAdapter.connect(
+      (newBook) => setAsterBook(newBook),
+      (newStatus: VenueConnectionState) => setAsterStatus(newStatus.status)
+    );
+
+    // 6. Subscribe to the selected asset
     hlAdapter.subscribe(selectedMarketId);
     lighterAdapter.subscribe(selectedMarketId);
     pacificaAdapter.subscribe(selectedMarketId);
+    asterAdapter.subscribe(selectedMarketId);
 
-    // 6. Cleanup on unmount or market change
+    // 7. Cleanup on unmount or market change
     return () => {
       hlAdapter.unsubscribe();
       hlAdapter.disconnect();
@@ -131,9 +143,12 @@ export default function Orderbook() {
       lighterAdapter.disconnect();
       pacificaAdapter.unsubscribe();
       pacificaAdapter.disconnect();
+      asterAdapter.unsubscribe();
+      asterAdapter.disconnect();
       setHlBook(null);
       setLighterBook(null);
       setPacificaBook(null);
+      setAsterBook(null);
     };
   }, [selectedMarketId]);
 
@@ -142,6 +157,7 @@ export default function Orderbook() {
       <OrderbookColumn venue="Hyperliquid" book={hlBook} status={hlStatus} />
       <OrderbookColumn venue="Lighter" book={lighterBook} status={lighterStatus} />
       <OrderbookColumn venue="Pacifica" book={pacificaBook} status={pacificaStatus} />
+      <OrderbookColumn venue="Aster" book={asterBook} status={asterStatus} />
     </div>
   );
 }
