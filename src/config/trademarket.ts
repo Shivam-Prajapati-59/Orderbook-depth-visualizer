@@ -80,4 +80,4 @@ export const PACIFICA_SYMBOL_MAP: SymbolMap = Object.fromEntries(
 );
 export const ASTER_SYMBOL_MAP: SymbolMap = Object.fromEntries(
   TRADE_MARKETS.map((m) => [m.id, m.asterSymbol]),
-);
+);
