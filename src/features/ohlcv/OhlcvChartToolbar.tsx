@@ -12,10 +12,10 @@ import {
 import { ToggleGroup, ToggleGroupItem } from '@/src/components/ui/toggle-group';
 import { VenueLogo } from '@/src/components/venue/VenueLogo';
 import { cn } from '@/src/lib/utils';
-import { VENUE, VENUE_LABELS } from '@/src/features/constant';
+import { VENUE, VENUE_LABELS } from '@/src/features/orderbook/constants';
 
 import { toolbarBtn, toggleItem, toggleStrip } from './lib/chartToolbarStyles';
-import { useOhlcvSettingsStore, type OhlcvTimeframe, type VenueId } from '../store/ohlcvSettingsStore';
+import { useOhlcvSettingsStore, type OhlcvTimeframe, type VenueId } from '../../store/ohlcvSettingsStore';
 
 const venueOrder: VenueId[] = [VENUE.HYPERLIQUID, VENUE.LIGHTER, VENUE.PACIFICA, VENUE.ASTER];
 

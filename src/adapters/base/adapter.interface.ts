@@ -19,6 +19,7 @@ export interface VenueAdapter {
     ): void;
     disconnect(): void;
 
+    subscribe(asset: string): void;
     unsubscribe(): void;
 
     resolveSymbol(asset: string): string | null;

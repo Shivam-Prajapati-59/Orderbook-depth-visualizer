@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/src/components/ui/dropdown-menu';
 import { TRADE_MARKETS } from '@/src/config/trademarket';
-import { useMarketStore } from '@/src/features/store/marketStore';
+import { useMarketStore } from '@/src/store/marketStore';
 
 const TradingHeader = () => {
   const selectedMarketId = useMarketStore((state) => state.selectedMarketId);
@@ -34,9 +34,9 @@ const TradingHeader = () => {
         <DropdownMenuContent align="start" className="w-[280px] bg-[#0F1318] border-[#1F2937] text-white">
           <DropdownMenuRadioGroup value={selectedMarketId} onValueChange={setSelectedMarketId}>
             {TRADE_MARKETS.map((market) => (
-              <DropdownMenuRadioItem 
-                key={market.id} 
-                value={market.id} 
+              <DropdownMenuRadioItem
+                key={market.id}
+                value={market.id}
                 className="focus:bg-[#1F2937] focus:text-white flex items-center gap-3 cursor-pointer py-2"
               >
                 <Image src={market.iconUrl} alt={market.name} width={24} height={24} className="rounded-full" />
@@ -45,9 +45,9 @@ const TradingHeader = () => {
                   <span className="text-xs text-gray-400">{market.name}</span>
                 </div>
                 <div className="text-end ml-auto">
-                      <span className="shrink-0 font-mono text-xs font-medium text-gray-500">
-                          {market.id}
-                        </span>
+                  <span className="shrink-0 font-mono text-xs font-medium text-gray-500">
+                    {market.id}
+                  </span>
                 </div>
               </DropdownMenuRadioItem>
             ))}
@@ -55,16 +55,16 @@ const TradingHeader = () => {
         </DropdownMenuContent>
       </DropdownMenu>
       <div>
-            {/* price */}
-            <div className="flex items-center gap-6 text-white">
-  {/* last trade */}
-  <div className="pl-3 border-l border-[#1F2937]">
-    <div className="text-base font-mono font-medium">67,359.10</div>
-    <div className="text-xs text-gray-400">
-      <span className="text-green-500">+0.62%</span>
-    </div>
-  </div>
-</div>
+        {/* price */}
+        <div className="flex items-center gap-6 text-white">
+          {/* last trade */}
+          <div className="pl-3 border-l border-[#1F2937]">
+            <div className="text-base font-mono font-medium">67,359.10</div>
+            <div className="text-xs text-gray-400">
+              <span className="text-green-500">+0.62%</span>
+            </div>
+          </div>
+        </div>
       </div>
     </header>
   );

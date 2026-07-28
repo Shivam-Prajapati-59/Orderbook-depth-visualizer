@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { createChart, ColorType, IChartApi, ISeriesApi, CandlestickData, CandlestickSeries } from "lightweight-charts";
 
-import { useMarketStore } from "@/src/features/store/marketStore";
-import { useOhlcvSettingsStore, VenueId } from "@/src/features/store/ohlcvSettingsStore";
+import { useMarketStore } from "@/src/store/marketStore";
+import { useOhlcvSettingsStore, VenueId } from "@/src/store/ohlcvSettingsStore";
 import { TRADE_MARKETS, HYPERLIQUID_SYMBOL_MAP, LIGHTER_MARKET_INDEX } from "@/src/config/trademarket";
 
 import { fetchHyperliquidCandleHistory } from "@/src/adapters/hyperliquid/ohlcv/candleSnapshot";

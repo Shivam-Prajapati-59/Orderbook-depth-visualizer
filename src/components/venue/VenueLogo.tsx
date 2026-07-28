@@ -1,4 +1,4 @@
-import { VENUE_DISPLAY } from '@/src/features/constant';
+import { VENUE_DISPLAY } from '@/src/features/orderbook/constants';
 import { VenueId } from '@/src/features/ohlcv/types';
 import { cn } from '@/src/lib/utils';
 

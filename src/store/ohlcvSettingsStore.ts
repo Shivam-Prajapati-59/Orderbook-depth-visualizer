@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { VENUE } from '@/src/features/constant';
+import { VENUE } from '@/src/features/orderbook/constants';
 
 export type OhlcvTimeframe = '1m' | '5m' | '15m' | '1h';
 export type OhlcvChartMode = 'candles' | 'compare';

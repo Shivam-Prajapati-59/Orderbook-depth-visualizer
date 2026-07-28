@@ -6,7 +6,7 @@ import { LighterAdapter } from "@/src/adapters/lighter/orderbook/client";
 import { PacificaAdapter } from "@/src/adapters/pacifica/orderbook/client";
 import { AsterAdapter } from "@/src/adapters/aster/orderbook/client";
 import { NormalizedOrderBook, VenueConnectionState, OrderBookLevel } from "@/src/adapters/base/types";
-import { useMarketStore } from "@/src/features/store/marketStore";
+import { useMarketStore } from "@/src/store/marketStore";
 
 const MAX_LEVELS = 20;
 
@@ -37,9 +37,9 @@ function OrderbookColumn({
         <div className="flex flex-col-reverse flex-1 overflow-hidden min-h-[200px]">
           {book ? book.asks.slice(0, MAX_LEVELS).map((ask, i) => (
             <div key={i} className="relative flex justify-between px-2 py-0.5 group hover:bg-[#1E2329]/50">
-              <div 
-                className="absolute inset-y-0 right-0 bg-[#ef4444]/10 transition-all" 
-                style={{ width: `${Math.min((ask.size / maxAskSize) * 100, 100)}%` }} 
+              <div
+                className="absolute inset-y-0 right-0 bg-[#ef4444]/10 transition-all"
+                style={{ width: `${Math.min((ask.size / maxAskSize) * 100, 100)}%` }}
               />
               <span className="text-[#ef4444] z-10">{ask.price.toFixed(2)}</span>
               <span className="text-gray-300 z-10">{ask.size.toFixed(4)}</span>
@@ -67,15 +67,15 @@ function OrderbookColumn({
         <div className="flex flex-col flex-1 overflow-hidden min-h-[200px]">
           {book ? book.bids.slice(0, MAX_LEVELS).map((bid, i) => (
             <div key={i} className="relative flex justify-between px-2 py-0.5 group hover:bg-[#1E2329]/50">
-              <div 
-                className="absolute inset-y-0 right-0 bg-[#22c55e]/10 transition-all" 
-                style={{ width: `${Math.min((bid.size / maxBidSize) * 100, 100)}%` }} 
+              <div
+                className="absolute inset-y-0 right-0 bg-[#22c55e]/10 transition-all"
+                style={{ width: `${Math.min((bid.size / maxBidSize) * 100, 100)}%` }}
               />
               <span className="text-[#22c55e] z-10">{bid.price.toFixed(2)}</span>
               <span className="text-gray-300 z-10">{bid.size.toFixed(4)}</span>
             </div>
           )) : (
-             <div className="flex-1 flex items-center justify-center text-gray-600 animate-pulse">Waiting for Bids...</div>
+            <div className="flex-1 flex items-center justify-center text-gray-600 animate-pulse">Waiting for Bids...</div>
           )}
         </div>
       </div>
