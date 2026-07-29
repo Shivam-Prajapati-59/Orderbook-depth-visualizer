@@ -22,11 +22,12 @@ export const VENUE_LABELS: Record<VenueId, string> = {
 };
 
 // Bid/ask hex colours used for depth-chart rendering per venue
+// Each pair uses a cool/warm contrast — bid is the cooler tone, ask is the warmer tone
 export const VENUE_PALETTE: Record<VenueId, { bid: string; ask: string }> = {
-  hyperliquid: { bid: '#22c55e', ask: '#ef4444' },
-  lighter: { bid: '#06b6d4', ask: '#f97316' },
-  pacifica: { bid: '#8b5cf6', ask: '#ec4899' },
-  aster: { bid: '#14b8a6', ask: '#f43f5e' },
+  hyperliquid: { bid: '#4ade80', ask: '#fb7185' },
+  lighter:     { bid: '#2dd4bf', ask: '#fb923c' },
+  pacifica:    { bid: '#818cf8', ask: '#e879f9' },
+  aster:       { bid: '#67e8f9', ask: '#f472b6' },
 };
 
 // Venue colour metadata combining palette swatches with Tailwind utility-class names

@@ -22,6 +22,9 @@ export const BucketLevels = (
         const bucketMap = new Map<number, BucketedLevel>();
 
         for (const level of levels) {
+            if (!Number.isFinite(level.price) || level.price <= 0 || !Number.isFinite(level.size) || level.size <= 0) {
+                continue;
+            }
             // Snap the raw price to the nearest grid line (biased per side)
             const bucketPrice = normalizePriceForSide(level.price, bucketSize, side);
 
@@ -55,7 +58,6 @@ export const BucketLevels = (
         return [];
     }
 }
-
 // Pick the largest tick size among the given venues (coarsest wins) with a 0.01 fallback
 export function resolveUnifiedTickSize(ticks: number[]): number {
     const DEFAULT_FALLBACK = 0.01;

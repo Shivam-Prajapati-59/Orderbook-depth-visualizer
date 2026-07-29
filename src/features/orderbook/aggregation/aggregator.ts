@@ -107,15 +107,13 @@ export const aggregateDepth = (
         const allBids = venueIds.flatMap((v) => books[v]!.bids);
         const allAsks = venueIds.flatMap((v) => books[v]!.asks);
 
-        const { rawBestBid, rawBestAsk } = computeRawTopofBook(allBids, allAsks);
-
-        // Bail if there's no valid top-of-book on either side
-        if (rawBestBid == null || rawBestAsk == null || rawBestBid <= 0 || rawBestAsk <= 0) {
+        // Return empty only when neither side has any levels
+        if (allBids.length === 0 && allAsks.length === 0) {
             return {
                 bids: [],
                 asks: [],
-                rawBestBid,
-                rawBestAsk,
+                rawBestBid: null,
+                rawBestAsk: null,
                 displayBestBid: null,
                 displayBestAsk: null,
                 midPrice: null,
@@ -127,7 +125,9 @@ export const aggregateDepth = (
             };
         }
 
-        // Bucket raw levels into the unified tick grid
+        const { rawBestBid, rawBestAsk } = computeRawTopofBook(allBids, allAsks);
+
+        // Bucket raw levels into the unified tick grid (available sides independently)
         const bucketedBids = BucketLevels(allBids, displayTickSize, 'bid');
         const bucketedAsks = BucketLevels(allAsks, displayTickSize, 'ask');
 
@@ -138,14 +138,15 @@ export const aggregateDepth = (
         const bids = computeCumulativeDepth(slicedBids);
         const asks = computeCumulativeDepth(slicedAsks);
 
-        // Display best comes from the bucketed grid; headline spread/mid uses raw top-of-book
-        const displayBestBid = bids[0]?.bucketPrice ?? null;
-        const displayBestAsk = asks[0]?.bucketPrice ?? null;
+        // Display best comes from the bucketed grid; headline spread/mid uses raw top-of-book.
+        // When a side's raw top-of-book is missing, null only cross-side metrics for that side.
+        const displayBestBid = rawBestBid != null && rawBestBid > 0 ? (bids[0]?.bucketPrice ?? null) : null;
+        const displayBestAsk = rawBestAsk != null && rawBestAsk > 0 ? (asks[0]?.bucketPrice ?? null) : null;
         let spread: number | null = null;
         let spreadPercentage: number | null = null;
         let midPrice: number | null = null;
 
-        if (rawBestBid !== null && rawBestAsk !== null) {
+        if (rawBestBid !== null && rawBestAsk !== null && rawBestBid > 0 && rawBestAsk > 0) {
             spread = Math.max(0, rawBestAsk - rawBestBid);
             midPrice = (rawBestBid + rawBestAsk) / 2;
             spreadPercentage = midPrice > 0 && spread != null ? (spread / midPrice) * 100 : null;

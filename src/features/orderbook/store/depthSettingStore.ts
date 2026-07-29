@@ -31,7 +31,7 @@ const INITIAL_STATE: DepthSetting = {
     selectedVenues: [VENUE.HYPERLIQUID, VENUE.LIGHTER, VENUE.PACIFICA, VENUE.ASTER],
 };
 
-export const useDepthSettingStore = create<DepthSetting & DepthSettingActions>((set, get) => ({
+export const useDepthSettingsStore = create<DepthSetting & DepthSettingActions>((set, get) => ({
     ...INITIAL_STATE,
 
     // Toggle a venue in/out of the selected list
