@@ -4,7 +4,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/src/
 
 import { buildTooltipFromLevel } from '../lib/depthTooltip';
 import { DepthBar } from './DepthBar';
-import { DepthTooltipCard } from './DepthTooltip';
+import { DepthTooltipCard } from './DepthTooltipCard';
 import type { DepthBarWithTooltipProps } from '../componentProps';
 
 export function DepthBarWithTooltip({

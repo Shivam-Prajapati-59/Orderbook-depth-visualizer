@@ -2,11 +2,10 @@ import { cn } from '@/src/lib/utils';
 
 import type { DepthBarProps } from '../componentProps';
 
-
 const annotationChip = 'border border-venue-hl-bid/50 bg-venue-hl-bid/15 text-venue-hl-bid';
 
-export function DepthBar({ segments, annotation, className, rowHeightPx }: DepthBarProps) {
-
+export function DepthBar({ side, segments, annotation, className, rowHeightPx }: DepthBarProps) {
+    void side;
     const fillRow = rowHeightPx == null;
     const hStyle = fillRow ? undefined : ({ height: rowHeightPx } as const);
 

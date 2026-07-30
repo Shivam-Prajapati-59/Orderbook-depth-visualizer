@@ -29,6 +29,7 @@ export function DepthChartSizeAxis({
                         </div>
                     ))}
                 </div>
+                <div className="shrink-0" style={{ width: Y_AXIS_W }} aria-hidden />
             </div>
             {showUsdRow ? (
                 <div className="flex flex-row">
@@ -45,6 +46,7 @@ export function DepthChartSizeAxis({
                             </span>
                         ))}
                     </div>
+                    <div className="shrink-0" style={{ width: Y_AXIS_W }} aria-hidden />
                 </div>
             ) : null}
             {showUsdRow ? (

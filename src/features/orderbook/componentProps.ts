@@ -4,7 +4,7 @@ import type { DepthLevel } from './aggregation/cumulative';
 import type { DepthSegment } from './lib/depthSegments';
 import type { DepthTooltipData } from './types';
 
-export type DepthChartPanelProps = {
+export type DepthGridProps = {
     bidLevels: DepthLevel[];
     askLevels: DepthLevel[];
     maxCumulativeSize: number;

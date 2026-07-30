@@ -8,9 +8,9 @@ import { askSegments, bidSegments } from '../lib/depthSegments';
 import { fmtPriceWithDigits, MID_STRIP_H, ROW_EDGE, ROW_FR } from '../lib/depthChartLayout';
 import { DepthBarWithTooltip } from './DepthBarWithTooltip';
 import { DepthChartSizeAxis } from './DepthChartSizeAxis';
-import type { DepthChartPanelProps } from '../componentProps';
+import type { DepthGridProps } from '../componentProps';
 
-export function DepthChartPanel({
+export function DepthGrid({
     bidLevels,
     askLevels,
     maxCumulativeSize,
@@ -23,7 +23,7 @@ export function DepthChartPanel({
     spreadAbs,
     priceFractionDigits,
     className,
-}: DepthChartPanelProps) {
+}: DepthGridProps) {
     const priceFd = priceFractionDigits;
 
     /** Asks above mid: reverse so best ask sits just above the spread line */
@@ -42,6 +42,59 @@ export function DepthChartPanel({
     );
 
     const rowEdge = (gridRow: number) => (gridRow < totalRowCount ? ROW_EDGE : '');
+
+    const renderDepthRow = (
+        level: (typeof bidLevels)[number],
+        _index: number,
+        side: 'ask' | 'bid',
+        gridRow: number,
+    ) => (
+        <Fragment key={`${side}-${venues.join('-')}-${level.bucketPrice}`}>
+            {showYAxis ? (
+                <div
+                    style={{ gridRow, gridColumn: 1 }}
+                    className={cn(
+                        'flex min-h-0 flex-col items-end justify-center border-r border-gray-800/60 pr-0.5',
+                        rowEdge(gridRow),
+                    )}
+                >
+                    <span className="text-[9px] leading-none text-gray-500 tabular-nums transition-colors duration-150 ease-out motion-reduce:transition-none">
+                        {fmtPriceWithDigits(level.bucketPrice, priceFd)}
+                    </span>
+                </div>
+            ) : null}
+            <div
+                style={{ gridRow, gridColumn: showYAxis ? 2 : 1 }}
+                className={cn(
+                    'flex h-full min-h-0 min-w-0 items-center justify-start pl-0',
+                    rowEdge(gridRow),
+                )}
+            >
+                <DepthBarWithTooltip
+                    level={level}
+                    side={side}
+                    segments={side === 'ask' ? askSegments(level, venues, maxCumulativeSize) : bidSegments(level, venues, maxCumulativeSize)}
+                    venueScope={venues}
+                    maxCumulativeSize={maxCumulativeSize}
+                    maxCumulativeDollar={maxCumulativeDollar}
+                    baseSymbol={baseSymbol}
+                    priceFractionDigits={priceFd}
+                />
+            </div>
+            <div
+                style={{ gridRow, gridColumn: showYAxis ? 3 : 2 }}
+                className={cn(
+                    'flex min-h-0 flex-col items-start justify-center border-l border-gray-800/60 pl-1',
+                    rowEdge(gridRow),
+                )}
+                aria-hidden={showYAxis ? true : undefined}
+            >
+                <span className="text-[9px] leading-none text-gray-500 tabular-nums transition-colors duration-150 ease-out motion-reduce:transition-none">
+                    {fmtPriceWithDigits(level.bucketPrice, priceFd)}
+                </span>
+            </div>
+        </Fragment>
+    );
 
     const midDivider = (
         <div className="relative h-full min-h-0 w-full overflow-visible bg-linear-to-b from-transparent via-white/3 to-transparent">
@@ -83,46 +136,12 @@ export function DepthChartPanel({
                 <div
                     className={cn(
                         'grid min-h-0 w-full flex-1',
-                        showYAxis ? 'grid-cols-[minmax(0,3.25rem)_minmax(0,1fr)]' : 'grid-cols-1',
+                        showYAxis ? 'grid-cols-[minmax(0,3.25rem)_minmax(0,1fr)_minmax(0,3.25rem)]' : 'grid-cols-[minmax(0,1fr)_minmax(0,3.25rem)]',
                     )}
                     style={{ gridTemplateRows }}
                 >
                     {/* Ask rows — rendered top to bottom (worst ask → best ask) */}
-                    {asksTopToBottom.map((level, i) => (
-                        <Fragment key={`ask-${venues.join('-')}-${level.bucketPrice}`}>
-                            {showYAxis ? (
-                                <div
-                                    style={{ gridRow: i + 1, gridColumn: 1 }}
-                                    className={cn(
-                                        'flex min-h-0 flex-col items-end justify-center border-r border-gray-800/60 pr-0.5',
-                                        rowEdge(i + 1),
-                                    )}
-                                >
-                                    <span className="text-[9px] leading-none text-gray-500 tabular-nums transition-colors duration-150 ease-out motion-reduce:transition-none">
-                                        {fmtPriceWithDigits(level.bucketPrice, priceFd)}
-                                    </span>
-                                </div>
-                            ) : null}
-                            <div
-                                style={{ gridRow: i + 1, gridColumn: showYAxis ? 2 : 1 }}
-                                className={cn(
-                                    'flex h-full min-h-0 min-w-0 items-center justify-start pl-0',
-                                    rowEdge(i + 1),
-                                )}
-                            >
-                                <DepthBarWithTooltip
-                                    level={level}
-                                    side="ask"
-                                    segments={askSegments(level, venues, maxCumulativeSize)}
-                                    venueScope={venues}
-                                    maxCumulativeSize={maxCumulativeSize}
-                                    maxCumulativeDollar={maxCumulativeDollar}
-                                    baseSymbol={baseSymbol}
-                                    priceFractionDigits={priceFd}
-                                />
-                            </div>
-                        </Fragment>
-                    ))}
+                    {asksTopToBottom.map((level, i) => renderDepthRow(level, i, 'ask', i + 1))}
 
                     {/* Spread / mid price strip */}
                     {showYAxis ? (
@@ -138,46 +157,14 @@ export function DepthChartPanel({
                     >
                         {midDivider}
                     </div>
+                    <div
+                        style={{ gridRow: askCount + 1, gridColumn: showYAxis ? 3 : 2 }}
+                        className={cn('min-h-0 border-l border-gray-800/60', rowEdge(askCount + 1))}
+                        aria-hidden
+                    />
 
                     {/* Bid rows */}
-                    {bidLevels.map((level, j) => (
-                        <Fragment key={`bid-${venues.join('-')}-${level.bucketPrice}`}>
-                            {showYAxis ? (
-                                <div
-                                    style={{ gridRow: askCount + 2 + j, gridColumn: 1 }}
-                                    className={cn(
-                                        'flex min-h-0 flex-col items-end justify-center border-r border-gray-800/60 pr-0.5',
-                                        rowEdge(askCount + 2 + j),
-                                    )}
-                                >
-                                    <span className="text-[9px] leading-none text-gray-500 tabular-nums transition-colors duration-150 ease-out motion-reduce:transition-none">
-                                        {fmtPriceWithDigits(level.bucketPrice, priceFd)}
-                                    </span>
-                                </div>
-                            ) : null}
-                            <div
-                                style={{
-                                    gridRow: askCount + 2 + j,
-                                    gridColumn: showYAxis ? 2 : 1,
-                                }}
-                                className={cn(
-                                    'flex h-full min-h-0 min-w-0 items-center justify-start pl-0',
-                                    rowEdge(askCount + 2 + j),
-                                )}
-                            >
-                                <DepthBarWithTooltip
-                                    level={level}
-                                    side="bid"
-                                    segments={bidSegments(level, venues, maxCumulativeSize)}
-                                    venueScope={venues}
-                                    maxCumulativeSize={maxCumulativeSize}
-                                    maxCumulativeDollar={maxCumulativeDollar}
-                                    baseSymbol={baseSymbol}
-                                    priceFractionDigits={priceFd}
-                                />
-                            </div>
-                        </Fragment>
-                    ))}
+                    {bidLevels.map((level, j) => renderDepthRow(level, j, 'bid', askCount + 2 + j))}
                 </div>
 
                 <DepthChartSizeAxis
