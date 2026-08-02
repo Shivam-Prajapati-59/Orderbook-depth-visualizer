@@ -1,5 +1,5 @@
 import TradingHeader from "@/src/components/trading/TradingHeader";
-import OhlcvChartToolbar from "@/src/features/ohlcv/OhlcvChartToolbar";
+import OhlcvChartToolbar from "@/src/features/ohlcv/components/OhlcvChartToolbar";
 import Orderbook from "@/src/components/trading/Orderbook";
 import CandlestickChart from "@/src/components/trading/CandlestickChart";
 
