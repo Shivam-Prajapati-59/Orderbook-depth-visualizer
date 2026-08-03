@@ -16,7 +16,7 @@ type AsterCandleStore = {
   setConnection: (c: VenueConnectionState) => void;
 };
 
-export const useAsterCandleStore = create<AsterCandleStore>((set, get) => ({
+export const useAsterCandlesStore = create<AsterCandleStore>((set, get) => ({
   bars: [],
   connection: null,
   upsertBars: (incoming) =>

@@ -16,7 +16,7 @@ type PacificaCandleStore = {
   setConnection: (c: VenueConnectionState) => void;
 };
 
-export const usePacificaCandleStore = create<PacificaCandleStore>(
+export const usePacificaCandlesStore = create<PacificaCandleStore>(
   (set, get) => ({
     bars: [],
     connection: null,

@@ -17,20 +17,22 @@ type LighterCandleStore = {
   setConnection: (c: VenueConnectionState) => void;
 };
 
-export const useLighterCandleStore = create<LighterCandleStore>((set, get) => ({
-  bars: [],
-  connection: null,
-  upsertBars: (incoming) =>
-    set((state) => ({
-      bars: mergeOhlcvBarsByOpenTime(state.bars, incoming),
-    })),
-  clear: () => set({ bars: [], connection: null }),
-  setConnection: (c) =>
-    set({
-      connection: {
-        status: c.status,
-        errorMessage: c.errorMessage,
-        reconnectAttempts: c.reconnectAttempts,
-      },
-    }),
-}));
+export const useLighterCandlesStore = create<LighterCandleStore>(
+  (set, get) => ({
+    bars: [],
+    connection: null,
+    upsertBars: (incoming) =>
+      set((state) => ({
+        bars: mergeOhlcvBarsByOpenTime(state.bars, incoming),
+      })),
+    clear: () => set({ bars: [], connection: null }),
+    setConnection: (c) =>
+      set({
+        connection: {
+          status: c.status,
+          errorMessage: c.errorMessage,
+          reconnectAttempts: c.reconnectAttempts,
+        },
+      }),
+  }),
+);
