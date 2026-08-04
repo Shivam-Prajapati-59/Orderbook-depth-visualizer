@@ -6,6 +6,7 @@ import { fetchPacificaCandleHistory } from "@/src/adapters/pacifica/ohlcv/candle
 import { fetchAsterCandleHistory } from "@/src/adapters/aster/ohlcv/candleSnapshot";
 import {
   HYPERLIQUID_SYMBOL_MAP,
+  ASTER_SYMBOL_MAP,
   getTradableMarket,
   isTradableAsset,
   type TradableAsset,
@@ -129,7 +130,7 @@ export function asterCandleHistoryQueryOptions({
         rangeEndMs - HL_HISTORY_BAR_COUNT * barSeconds * 1000;
 
       return fetchAsterCandleHistory({
-        symbol: asset,
+        symbol: ASTER_SYMBOL_MAP[asset],
         interval: asterCandleInterval(timeframe),
         startTime: rangeStartMs,
         endTime: rangeEndMs,

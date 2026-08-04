@@ -64,6 +64,7 @@ export function useLighterCandlesPoll({
     shouldPoll,
     candlesQuery.isSuccess,
     candlesQuery.isError,
+    candlesQuery.error,
     candlesQuery.data,
   ]);
 }

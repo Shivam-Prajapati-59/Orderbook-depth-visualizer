@@ -42,7 +42,9 @@ export const useOrderBookStream = ({
     // Keep latest venues available through a ref so the effect body can read them
     // without adding the raw array to the dependency list
     const venuesRef = useRef<VenueId[]>(venues);
-    venuesRef.current = venues;
+    useEffect(() => {
+        venuesRef.current = venues;
+    }, [venues]);
 
     // Derive a stable, order-independent key from the venues array so the effect
     // only reruns when the actual set of venues changes, not on reference identity

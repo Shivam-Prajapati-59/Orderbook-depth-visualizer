@@ -17,8 +17,7 @@ type LighterCandleStore = {
   setConnection: (c: VenueConnectionState) => void;
 };
 
-export const useLighterCandlesStore = create<LighterCandleStore>(
-  (set, get) => ({
+export const useLighterCandlesStore = create<LighterCandleStore>((set) => ({
     bars: [],
     connection: null,
     upsertBars: (incoming) =>

@@ -4,6 +4,7 @@ import { VENUE } from '@/src/features/orderbook/constants';
 export type OhlcvTimeframe = '1m' | '5m' | '15m' | '1h';
 export type OhlcvChartMode = 'candles' | 'compare';
 export type VenueId = 'hyperliquid' | 'lighter' | 'pacifica' | 'aster';
+export type CompareVenueSelection = VenueId[];
 
 interface OhlcvSettings {
     timeframe: OhlcvTimeframe;
@@ -12,6 +13,8 @@ interface OhlcvSettings {
     setChartMode: (chartMode: OhlcvChartMode) => void;
     candleVenue: VenueId;
     setCandleVenue: (venue: VenueId) => void;
+    compareVenues: CompareVenueSelection;
+    setCompareVenues: (venues: CompareVenueSelection) => void;
 }
 
 export const useOhlcvSettingsStore = create<OhlcvSettings>((set) => ({
@@ -21,5 +24,6 @@ export const useOhlcvSettingsStore = create<OhlcvSettings>((set) => ({
     setChartMode: (chartMode) => set({ chartMode }),
     candleVenue: VENUE.HYPERLIQUID,
     setCandleVenue: (candleVenue) => set({ candleVenue }),
+    compareVenues: [VENUE.HYPERLIQUID, VENUE.LIGHTER],
+    setCompareVenues: (compareVenues) => set({ compareVenues }),
 }));
-

@@ -23,6 +23,14 @@ export type CompareVenueKey =
   | "pacifica"
   | "aster";
 
+/** Canonical venue order for the OHLCV compare chart (lines, volume bands, legend, tooltip). */
+export const COMPARE_VENUE_ORDER: CompareVenueKey[] = [
+  "hyperliquid",
+  "lighter",
+  "pacifica",
+  "aster",
+];
+
 export const VENUE_CHART_COMPARE: Record<
   CompareVenueKey,
   { line: string; vol: string }

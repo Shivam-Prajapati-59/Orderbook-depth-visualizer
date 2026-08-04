@@ -25,27 +25,25 @@ import {
   createDarkChartOptions,
 } from "./chartTheme";
 
-const COMPARE_ORDER: CompareVenueKey[] = [
-  "hyperliquid",
-  "lighter",
-  "pacifica",
-  "aster",
-];
-
 export type CompareLineHoverPayload = {
   x: number;
   y: number;
   timeSec: number;
-  hlPrice: number;
-  vtxPrice: number;
-  spreadAbs: number;
-  spreadPct: number;
+  /** Close price for every venue that has a data point at the crosshair. */
+  prices: Partial<Record<CompareVenueKey, number>>;
+  /** Spread between Hyperliquid and Lighter closes, when both are present. */
+  spreadAbs: number | null;
+  spreadPct: number | null;
 };
 
 type CompareVenueBundle = {
   line: ISeriesApi<"Line", Time>;
   vol: ISeriesApi<"Histogram", Time>;
 };
+
+const COMPARE_VOLUME_BAND_START = 0.34;
+const COMPARE_VOLUME_BAND_STEP = 0.165;
+const COMPARE_VOLUME_BAND_HEIGHT = 0.12;
 
 export type OhlcvChartBundle = {
   chart: IChartApi;
@@ -254,6 +252,7 @@ export type MountOhlcvChartInput = {
   chartMode: OhlcvChartMode;
   candleBars: OhlcvBar[];
   compareSeries: Partial<Record<CompareVenueKey, OhlcvBar[]>>;
+  compareVenues: CompareVenueKey[];
   onCompareLineHover?: (payload: CompareLineHoverPayload | null) => void;
 };
 
@@ -264,19 +263,25 @@ export function mountOhlcvChart(
   container: HTMLElement,
   input: MountOhlcvChartInput,
 ): { bundle: OhlcvChartBundle; dispose: () => void } {
-  const { chartMode, candleBars, compareSeries, onCompareLineHover } = input;
+  const {
+    chartMode,
+    candleBars,
+    compareSeries,
+    compareVenues,
+    onCompareLineHover,
+  } = input;
 
   const chart = createChart(container, {
     ...createDarkChartOptions(),
     autoSize: true,
   });
 
-  let hlSeries: ISeriesApi<"Line", Time> | null = null;
-  let lighterSeries: ISeriesApi<"Line", Time> | null = null;
+  let compareSeriesMap: Partial<Record<CompareVenueKey, CompareVenueBundle>> =
+    {};
 
-  /** Only emit updates when we have a full payload; clear on container pointerleave (see mount). */
+  /** Only emit updates when we have at least one price; clear on container pointerleave (see mount). */
   const onCrosshairMove = (param: MouseEventParams<Time>) => {
-    if (!onCompareLineHover || !hlSeries || !lighterSeries) return;
+    if (!onCompareLineHover) return;
     if (!param.point || param.time === undefined) {
       return;
     }
@@ -284,32 +289,47 @@ export function mountOhlcvChart(
     if (timeSec === null) {
       return;
     }
-    const hlPrice = lineValueAtCrosshair(param.seriesData, hlSeries);
-    const vtxPrice = lineValueAtCrosshair(param.seriesData, lighterSeries);
-    if (hlPrice === null || vtxPrice === null) {
+
+    const prices: Partial<Record<CompareVenueKey, number>> = {};
+    for (const venueId of compareVenues) {
+      const line = compareSeriesMap[venueId]?.line;
+      if (!line) continue;
+      const price = lineValueAtCrosshair(param.seriesData, line);
+      if (price !== null) {
+        prices[venueId] = price;
+      }
+    }
+    if (Object.keys(prices).length === 0) {
       return;
     }
-    const mid = (hlPrice + vtxPrice) / 2;
-    const spreadAbs = Math.abs(hlPrice - vtxPrice);
-    const spreadPct = mid !== 0 ? (spreadAbs / mid) * 100 : 0;
+
+    const hlPrice = prices.hyperliquid;
+    const vtxPrice = prices.lighter;
+    let spreadAbs: number | null = null;
+    let spreadPct: number | null = null;
+    if (hlPrice !== undefined && vtxPrice !== undefined) {
+      const mid = (hlPrice + vtxPrice) / 2;
+      spreadAbs = Math.abs(hlPrice - vtxPrice);
+      spreadPct = mid !== 0 ? (spreadAbs / mid) * 100 : 0;
+    }
+
     onCompareLineHover({
       x: param.point.x,
       y: param.point.y,
       timeSec,
-      hlPrice,
-      vtxPrice,
+      prices,
       spreadAbs,
       spreadPct,
     });
   };
 
-  /** Draws one line + one volume band for every venue with bars (or that has a colour). */
+  /** Draws one line + one volume band for every venue (empty bars render as empty series). */
   const mountCompareVenues = (): Partial<
     Record<CompareVenueKey, CompareVenueBundle>
   > => {
     const seriesMap: Partial<Record<CompareVenueKey, CompareVenueBundle>> = {};
 
-    COMPARE_ORDER.forEach((venueId, index) => {
+    compareVenues.forEach((venueId, index) => {
       const palette = VENUE_CHART_COMPARE[venueId];
       const bars = compareSeries[venueId] ?? [];
 
@@ -326,23 +346,24 @@ export function mountOhlcvChart(
       });
 
       if (index === 0) {
-        line.priceScale().applyOptions({ scaleMargins: { top: 0.04, bottom: 0.3 } });
+        line.priceScale().applyOptions({
+          scaleMargins: { top: 0.04, bottom: 0.3 },
+        });
       }
 
-      const bandCount = COMPARE_ORDER.length;
-      const bandTop = 0.34 + index * 0.165;
+      const bandTop =
+        COMPARE_VOLUME_BAND_START + index * COMPARE_VOLUME_BAND_STEP;
       chart.priceScale(`vol-${venueId}`).applyOptions({
-        scaleMargins: { top: bandTop, bottom: bandTop + 0.15 },
+        // `bottom` is a margin from the bottom edge, not the band's bottom
+        // coordinate. The two margins must sum to less than 1.
+        scaleMargins: {
+          top: bandTop,
+          bottom: 1 - (bandTop + COMPARE_VOLUME_BAND_HEIGHT),
+        },
       });
 
       line.setData(barsToLine(bars));
       vol.setData(barsToCompareVolumeHistogram(bars, palette.vol));
-
-      if (venueId === "hyperliquid") {
-        hlSeries = line;
-      } else if (venueId === "lighter") {
-        lighterSeries = line;
-      }
 
       seriesMap[venueId] = { line, vol };
     });
@@ -378,8 +399,8 @@ export function mountOhlcvChart(
     volSeries.setData(barsToHistogram(candleBars));
     bundle = { chart, candleSeries, volSeries };
   } else {
-    const compareSeriesBundle = mountCompareVenues();
-    bundle = { chart, compareSeries: compareSeriesBundle };
+    compareSeriesMap = mountCompareVenues();
+    bundle = { chart, compareSeries: compareSeriesMap };
 
     if (onCompareLineHover) {
       chart.subscribeCrosshairMove(onCrosshairMove);
@@ -391,7 +412,9 @@ export function mountOhlcvChart(
       chartMode === "candles"
         ? candleBars.length
         : Math.max(
-            ...COMPARE_ORDER.map((venueId) => compareSeries[venueId]?.length ?? 0),
+            ...compareVenues.map(
+              (venueId) => compareSeries[venueId]?.length ?? 0,
+            ),
           );
     applyInitialCandleViewport(chart, barCount);
   }
@@ -422,6 +445,7 @@ export function mountOhlcvChart(
 export function applyOhlcvChartData(
   bundle: OhlcvChartBundle | null,
   chartMode: OhlcvChartMode,
+  compareVenues: CompareVenueKey[],
   prevCandlesRef: RefObject<OhlcvBar[]>,
   prevCompareRefs: Record<CompareVenueKey, RefObject<OhlcvBar[]>>,
   candleBars: OhlcvBar[],
@@ -440,12 +464,18 @@ export function applyOhlcvChartData(
   }
 
   if (chartMode === "compare" && bundle.compareSeries) {
-    for (const venueId of COMPARE_ORDER) {
+    for (const venueId of compareVenues) {
       const venue = bundle.compareSeries[venueId];
       const prevRef = prevCompareRefs[venueId];
       const next = compareSeries[venueId];
       if (!venue || !prevRef) continue;
-      syncCompareVenue(venue.line, venue.vol, prevRef, next ?? [], VENUE_CHART_COMPARE[venueId].vol);
+      syncCompareVenue(
+        venue.line,
+        venue.vol,
+        prevRef,
+        next ?? [],
+        VENUE_CHART_COMPARE[venueId].vol,
+      );
     }
   }
 }

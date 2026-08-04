@@ -79,6 +79,7 @@ export function useAsterCandlesStream({
     shouldFetchHistory,
     historyQuery.isSuccess,
     historyQuery.isError,
+    historyQuery.error,
     historyQuery.data,
   ]);
 

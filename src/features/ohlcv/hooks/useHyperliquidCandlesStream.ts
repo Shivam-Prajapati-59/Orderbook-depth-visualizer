@@ -78,6 +78,7 @@ export function useHyperliquidCandlesStream({
     shouldFetchHistory,
     historyQuery.isSuccess,
     historyQuery.isError,
+    historyQuery.error,
     historyQuery.data,
   ]);
 

@@ -19,7 +19,7 @@ type HyperLiquidCandleStore = {
 };
 
 export const useHyperliquidCandlesStore = create<HyperLiquidCandleStore>(
-  (set, get) => ({
+  (set) => ({
     bars: [],
     connection: null,
     upsertBars: (incoming) =>

@@ -17,7 +17,7 @@ type PacificaCandleStore = {
 };
 
 export const usePacificaCandlesStore = create<PacificaCandleStore>(
-  (set, get) => ({
+  (set) => ({
     bars: [],
     connection: null,
     upsertBars: (incoming) =>

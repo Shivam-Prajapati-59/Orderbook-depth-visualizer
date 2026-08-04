@@ -19,6 +19,12 @@ import { useOhlcvSettingsStore, type OhlcvTimeframe, type VenueId } from '../../
 
 const venueOrder: VenueId[] = [VENUE.HYPERLIQUID, VENUE.LIGHTER, VENUE.PACIFICA, VENUE.ASTER];
 
+function venueTriggerLabel(venues: VenueId[]) {
+    if (venues.length === 0) return 'Select venues';
+    if (venues.length === 1) return VENUE_LABELS[venues[0]!];
+    return `${venues.length} venues`;
+}
+
 const timeframes: { id: OhlcvTimeframe; label: string }[] = [
     { id: '1m', label: '1m' },
     { id: '5m', label: '5m' },
@@ -33,6 +39,8 @@ export function OhlcvChartToolbar() {
     const setTimeframe = useOhlcvSettingsStore((s) => s.setTimeframe);
     const candleVenue = useOhlcvSettingsStore((s) => s.candleVenue);
     const setCandleVenue = useOhlcvSettingsStore((s) => s.setCandleVenue);
+    const compareVenues = useOhlcvSettingsStore((s) => s.compareVenues);
+    const setCompareVenues = useOhlcvSettingsStore((s) => s.setCompareVenues);
 
     // Base UI ToggleGroup uses string[] for value — memoize to avoid needless re-renders
     const timeframeArr = [timeframe] as string[];
@@ -54,7 +62,7 @@ export function OhlcvChartToolbar() {
 
                     <div className="hidden h-4 w-px shrink-0 bg-gray-800/90 sm:block" aria-hidden />
 
-                    {/* Venue dropdown — only visible in candles mode */}
+                    {/* Candle venue dropdown */}
                     {chartMode === 'candles' && (
                         <DropdownMenu>
                             <DropdownMenuTrigger
@@ -87,6 +95,64 @@ export function OhlcvChartToolbar() {
                                         <span className="flex items-center gap-2">
                                             <VenueLogo venueId={id} size="md" />
                                             {VENUE_LABELS[id]}
+                                        </span>
+                                    </DropdownMenuCheckboxItem>
+                                ))}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    )}
+
+                    {/* Compare venue selection */}
+                    {chartMode === 'compare' && (
+                        <DropdownMenu>
+                            <DropdownMenuTrigger
+                                render={
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        className={cn(toolbarBtn, 'min-w-28 justify-between gap-2 sm:min-w-32')}
+                                    />
+                                }
+                            >
+                                <span className="flex min-w-0 items-center gap-1.5">
+                                    <span className="flex shrink-0 -space-x-1.5">
+                                        {compareVenues.map((id) => (
+                                            <VenueLogo
+                                                key={id}
+                                                venueId={id}
+                                                size="sm"
+                                                className="ring-2 ring-[#0B0E11]"
+                                            />
+                                        ))}
+                                    </span>
+                                    <span className="truncate">{venueTriggerLabel(compareVenues)}</span>
+                                </span>
+                                <ChevronDown className="size-3 shrink-0 text-gray-500" />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                                align="start"
+                                className="w-(--anchor-width) min-w-32 border-[#2B3139] bg-[#141920] p-1 shadow-xl"
+                            >
+                                {venueOrder.map((id) => (
+                                    <DropdownMenuCheckboxItem
+                                        key={id}
+                                        checked={compareVenues.includes(id)}
+                                        onCheckedChange={(checked) => {
+                                            if (checked) {
+                                                if (!compareVenues.includes(id)) {
+                                                    setCompareVenues([...compareVenues, id]);
+                                                }
+                                            } else if (compareVenues.length > 1) {
+                                                setCompareVenues(compareVenues.filter((venue) => venue !== id));
+                                            }
+                                        }}
+                                        className="cursor-pointer rounded font-mono text-[10px] text-gray-200 focus:bg-white/6"
+                                    >
+                                        <span className="flex min-w-0 flex-1 items-center gap-2">
+                                            <VenueLogo venueId={id} size="md" />
+                                            <span className="min-w-0 flex-1">
+                                                <span className="block leading-tight">{VENUE_LABELS[id]}</span>
+                                            </span>
                                         </span>
                                     </DropdownMenuCheckboxItem>
                                 ))}

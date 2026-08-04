@@ -1,7 +1,6 @@
 import TradingHeader from "@/src/components/trading/TradingHeader";
-import OhlcvChartToolbar from "@/src/features/ohlcv/components/OhlcvChartToolbar";
 import Orderbook from "@/src/components/trading/Orderbook";
-import CandlestickChart from "@/src/components/trading/CandlestickChart";
+import { ChartColumn } from "@/src/features/ohlcv/components/ChartColumn";
 
 export default function Home() {
   return (
@@ -11,9 +10,8 @@ export default function Home() {
       <main className="flex-1 p-4">
         <div className="max-w-[1600px] mx-auto space-y-6">
           {/* Top section: Chart */}
-          <section className="bg-[#141920] border border-[#1E2329] rounded shadow-xl overflow-hidden">
-            <OhlcvChartToolbar />
-            <CandlestickChart />
+          <section className="flex h-[480px] flex-col bg-[#141920] border border-[#1E2329] rounded shadow-xl overflow-hidden">
+            <ChartColumn />
           </section>
 
           {/* Bottom section: Orderbook */}
