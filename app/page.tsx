@@ -4,21 +4,22 @@ import { ChartColumn } from "@/src/features/ohlcv/components/ChartColumn";
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen bg-[#0B0E11] text-gray-200">
+    <div className="flex h-dvh flex-col overflow-hidden bg-[#0B0E11] text-gray-200">
       <TradingHeader />
-      
-      <main className="flex-1 p-4">
-        <div className="max-w-[1600px] mx-auto space-y-6">
-          {/* Top section: Chart */}
-          <section className="flex h-[480px] flex-col bg-[#141920] border border-[#1E2329] rounded shadow-xl overflow-hidden">
-            <ChartColumn />
-          </section>
 
-          {/* Bottom section: Orderbook */}
-          <section>
-            <h2 className="text-xl font-bold font-mono mb-4 text-gray-300">Orderbook Comparison</h2>
-            <Orderbook />
-          </section>
+      <main className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-4 xl:overflow-hidden">
+        <div className="mx-auto min-h-0 xl:h-full">
+          <div className="flex flex-col gap-4 xl:h-full xl:min-h-0 xl:flex-row xl:items-stretch">
+            {/* Chart (OHLCV) — wider column */}
+            <section className="flex min-h-[480px] w-full min-w-0 flex-col overflow-hidden rounded border border-[#1E2329] bg-[#141920] shadow-xl xl:min-h-0 xl:flex-[3]">
+              <ChartColumn />
+            </section>
+
+            {/* Orderbook — narrower column */}
+            <section className="flex min-h-[480px] w-full min-w-0 flex-col xl:min-h-0 xl:flex-[2]">
+              <Orderbook />
+            </section>
+          </div>
         </div>
       </main>
     </div>

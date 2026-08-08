@@ -66,8 +66,8 @@ export function CompareLineTooltipCard({ data, className }: CompareLineTooltipCa
             )}
         >
             <div className="mb-3 flex items-center justify-between border-b border-gray-800 pb-2">
-                <span className="text-[10px] font-bold text-gray-500 uppercase">Time</span>
-                <span className="font-mono text-[11px] font-semibold text-gray-200">{data.timeLabel}</span>
+                <span className="text-[11px] font-bold text-gray-500 uppercase">Time</span>
+                <span className="font-mono text-[12px] font-medium text-gray-200">{data.timeLabel}</span>
             </div>
             <div className="mb-3 space-y-2">
                 {data.venues.map((venue) => (

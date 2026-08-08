@@ -13,6 +13,7 @@ import { useAsterCandlesStream } from '../hooks/useAsterCandlesStore';
 import { useOhlcvFeedErrorToasts } from '../hooks/useOhlcvFeedError';
 import { buildCompareLineTooltipData } from './CompareLineTooltip';
 import { OhlcvChartArea } from './OhlcvChartArea';
+import { ChartDrawingToolbar, type DrawingTool } from './ChartDrawingToolbar';
 import { OhlcvChartToolbar } from './OhlcvChartToolbar';
 import { useHyperliquidCandlesStore } from '../store/hyperLiquidCandlesStore';
 import { useLighterCandlesStore } from '../store/lighterCandlesStore';
@@ -73,6 +74,8 @@ export function CandlestickChartPanel() {
 
     const chartContainerRef = useRef<HTMLDivElement>(null);
     const [compareHover, setCompareHover] = useState<CompareLineHoverPayload | null>(null);
+    const [drawingTool, setDrawingTool] = useState<DrawingTool>('cursor');
+    const [drawingAction, setDrawingAction] = useState<{ type: 'clear' | 'reset'; id: number } | null>(null);
 
     const onCompareLineHover = useCallback((payload: CompareLineHoverPayload | null) => {
         setCompareHover(payload);
@@ -135,12 +138,24 @@ export function CandlestickChartPanel() {
     useOhlcvChart(chartContainerRef, chartMode, candleBars, compareSeries, compareVenues, {
         chartResetKey,
         onCompareLineHover: chartMode === 'compare' ? onCompareLineHover : undefined,
+        drawingTool,
+        drawingAction,
     });
 
     return (
         <div className="flex min-h-0 w-full flex-1 flex-col overflow-hidden">
             <OhlcvChartToolbar />
-            <OhlcvChartArea ref={chartContainerRef} compareTooltip={compareTooltip} />
+            <div className="relative flex min-h-0 flex-1">
+                <OhlcvChartArea ref={chartContainerRef} compareTooltip={compareTooltip} />
+                {chartMode === 'candles' ? (
+                    <ChartDrawingToolbar
+                        activeTool={drawingTool}
+                        onToolChange={setDrawingTool}
+                        onClear={() => setDrawingAction((previous) => ({ type: 'clear', id: (previous?.id ?? 0) + 1 }))}
+                        onReset={() => setDrawingAction((previous) => ({ type: 'reset', id: (previous?.id ?? 0) + 1 }))}
+                    />
+                ) : null}
+            </div>
         </div>
     );
 }

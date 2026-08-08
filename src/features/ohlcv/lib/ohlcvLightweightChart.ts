@@ -7,6 +7,7 @@ import {
   createChart,
   type HistogramData,
   type IChartApi,
+  type IPriceLine,
   type ISeriesApi,
   type LineData,
   type MouseEventParams,
@@ -49,6 +50,8 @@ export type OhlcvChartBundle = {
   chart: IChartApi;
   candleSeries?: ISeriesApi<"Candlestick", Time>;
   volSeries?: ISeriesApi<"Histogram", Time>;
+  addHorizontalLine: (price: number) => void;
+  clearHorizontalLines: () => void;
   /** Compare mode: one line + volume band per venue. */
   compareSeries?: Partial<Record<CompareVenueKey, CompareVenueBundle>>;
 };
@@ -254,6 +257,7 @@ export type MountOhlcvChartInput = {
   compareSeries: Partial<Record<CompareVenueKey, OhlcvBar[]>>;
   compareVenues: CompareVenueKey[];
   onCompareLineHover?: (payload: CompareLineHoverPayload | null) => void;
+  onCandleClick?: (price: number) => void;
 };
 
 /**
@@ -269,6 +273,7 @@ export function mountOhlcvChart(
     compareSeries,
     compareVenues,
     onCompareLineHover,
+    onCandleClick,
   } = input;
 
   const chart = createChart(container, {
@@ -371,11 +376,28 @@ export function mountOhlcvChart(
     return seriesMap;
   };
 
+  const horizontalLines: IPriceLine[] = [];
+  let candleSeries: ISeriesApi<"Candlestick", Time> | undefined;
+  const addHorizontalLine = (price: number) => {
+    if (!candleSeries || !Number.isFinite(price)) return;
+    horizontalLines.push(candleSeries.createPriceLine({
+      price,
+      color: "#F0B90B",
+      lineWidth: 1,
+      lineStyle: 2,
+      axisLabelVisible: true,
+      title: "",
+    }));
+  };
+  const clearHorizontalLines = () => {
+    if (!candleSeries) return;
+    horizontalLines.splice(0).forEach((line) => candleSeries?.removePriceLine(line));
+  };
   let bundle: OhlcvChartBundle;
 
   if (chartMode === "candles") {
     onCompareLineHover?.(null);
-    const candleSeries = chart.addSeries(CandlestickSeries, {
+    candleSeries = chart.addSeries(CandlestickSeries, {
       upColor: "#0ECB81",
       downColor: "#F6465D",
       borderVisible: false,
@@ -397,10 +419,10 @@ export function mountOhlcvChart(
 
     candleSeries.setData(barsToCandles(candleBars));
     volSeries.setData(barsToHistogram(candleBars));
-    bundle = { chart, candleSeries, volSeries };
+    bundle = { chart, candleSeries, volSeries, addHorizontalLine, clearHorizontalLines };
   } else {
     compareSeriesMap = mountCompareVenues();
-    bundle = { chart, compareSeries: compareSeriesMap };
+    bundle = { chart, compareSeries: compareSeriesMap, addHorizontalLine, clearHorizontalLines };
 
     if (onCompareLineHover) {
       chart.subscribeCrosshairMove(onCrosshairMove);
@@ -428,6 +450,13 @@ export function mountOhlcvChart(
     };
   }
 
+  const onChartClick = (param: MouseEventParams<Time>) => {
+    if (chartMode !== "candles" || !candleSeries || !param.point || !onCandleClick) return;
+    const price = candleSeries.coordinateToPrice(param.point.y);
+    if (price !== null) onCandleClick(price);
+  };
+  if (chartMode === "candles" && onCandleClick) chart.subscribeClick(onChartClick);
+
   const dispose = () => {
     onCompareLineHover?.(null);
     removePointerLeave?.();
@@ -435,6 +464,7 @@ export function mountOhlcvChart(
     if (chartMode !== "candles" && onCompareLineHover) {
       chart.unsubscribeCrosshairMove(onCrosshairMove);
     }
+    if (chartMode === "candles" && onCandleClick) chart.unsubscribeClick(onChartClick);
     chart.remove();
   };
 

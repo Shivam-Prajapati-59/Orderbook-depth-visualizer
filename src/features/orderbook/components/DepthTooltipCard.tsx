@@ -17,10 +17,10 @@ export function DepthTooltipCard({ data, className }: DepthTooltipCardProps) {
             )}
         >
             <div className="mb-1 flex items-baseline justify-between gap-2 border-b border-gray-800/80 pb-1">
-                <span className="text-[8px] font-semibold tracking-wide text-gray-500 uppercase">
+                <span className="text-[10px] font-medium tracking-wide text-gray-500 uppercase">
                     Price
                 </span>
-                <span className="font-mono text-xs font-bold leading-none text-[#F0B90B] tabular-nums">
+                <span className="font-mono text-[13px] font-bold leading-none text-[#F0B90B] tabular-nums">
                     {data.price}
                 </span>
             </div>
@@ -30,9 +30,9 @@ export function DepthTooltipCard({ data, className }: DepthTooltipCardProps) {
                         key={v.name}
                         className="flex items-center justify-between gap-2 text-[9px] leading-tight"
                     >
-                        <div className="flex min-w-0 items-center gap-1">
-                            <div className="size-2 shrink-0 rounded-[2px]" style={{ backgroundColor: v.color }} />
-                            <span className="truncate font-medium text-gray-400">{v.name}</span>
+                        <div className="flex min-w-0 items-center gap-1.5">
+                            <div className="size-2 shrink-0 rounded-xs" style={{ backgroundColor: v.color }} />
+                            <span className="truncate text-gray-400">{v.name}</span>
                         </div>
                         <div className="shrink-0 text-right">
                             <div className="font-mono font-semibold tabular-nums text-white">
@@ -70,7 +70,7 @@ export function DepthTooltipCard({ data, className }: DepthTooltipCardProps) {
                 </div>
                 <div className="flex justify-between text-[8px] leading-tight text-gray-500">
                     <span>% max</span>
-                    <span className="font-mono font-medium text-gray-400 tabular-nums">
+                    <span className="font-mono text-gray-400 tabular-nums">
                         {data.pctOfBook}%
                     </span>
                 </div>

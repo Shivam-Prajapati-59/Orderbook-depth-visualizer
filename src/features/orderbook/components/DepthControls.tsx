@@ -27,13 +27,13 @@ function venueTriggerLabel(venues: VenueId[]) {
     return `${venues.length} venues`;
 }
 const toolbarBtn =
-    'h-7 border-white/8 bg-[#0d1117] px-2 font-mono text-[10px] font-medium text-gray-200 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.03)] hover:border-[#F0B90B]/30';
+    'h-8 border-white/8 bg-[#0d1117] px-2 font-mono text-[12px] font-medium text-gray-200 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.03)] hover:border-[#F0B90B]/30';
 
 const toggleStrip =
-    'inline-flex h-7 max-h-7 min-h-7 items-stretch overflow-hidden rounded-md border border-white/6 bg-[#0d1117] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.03)]';
+    'inline-flex h-8 max-h-8 min-h-8 items-stretch overflow-hidden rounded-md border border-white/6 bg-[#0d1117] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.03)]';
 
 const toggleItem =
-    'h-full min-h-0 max-h-full shrink-0 rounded-none border-0 px-2 font-mono text-[10px] font-semibold uppercase tracking-wide shadow-none ring-0 transition-colors outline-none focus-visible:ring-0 data-[state=off]:text-gray-500 data-[state=off]:hover:bg-white/[0.04] data-[state=off]:hover:text-gray-300 data-[state=on]:bg-[#F0B90B]/12 data-[state=on]:text-[#F0B90B]';
+    'h-full min-h-0 max-h-full shrink-0 rounded-none border-0 px-2 font-mono text-[12px] font-medium uppercase tracking-wide shadow-none ring-0 transition-colors outline-none focus-visible:ring-0 aria-[pressed=false]:text-gray-500 aria-[pressed=false]:hover:bg-white/[0.04] aria-[pressed=false]:hover:text-gray-300 aria-pressed:bg-[#F0B90B]/12 aria-pressed:text-[#F0B90B]';
 
 export function DepthControls() {
     const displayMode = useDepthSettingsStore((s) => s.displayMode);
@@ -44,17 +44,17 @@ export function DepthControls() {
     const setDepthLevels = useDepthSettingsStore((s) => s.setDepthLevels);
 
     return (
-        <header className="shrink-0 border-b border-[#1E2329] bg-[#0B0E11] px-2 py-1.5 sm:px-3">
-            <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1.5">
-                <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1.5 sm:gap-x-3">
-                    <div className="flex items-center gap-1.5">
+        <header className="shrink-0 border-b border-[#1E2329] bg-[#0B0E11] px-2 py-2 sm:px-3 xl:py-1.5">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-2 sm:flex-nowrap sm:gap-x-3 sm:gap-y-1.5">
+                    <div className="flex basis-full items-center gap-1.5 sm:basis-auto">
                         <div className="h-3 w-0.5 shrink-0 rounded-full bg-[#F0B90B]/80" aria-hidden />
-                        <span className="font-mono text-[10px] font-medium tracking-wide text-gray-500">
+                        <span className="font-mono text-[11px] font-medium tracking-wide text-gray-500 sm:text-[14px]">
                             Depth
                         </span>
                     </div>
 
-                    <div className="hidden h-4 w-px shrink-0 bg-gray-800/90 sm:block" aria-hidden />
+                    <div className="hidden h-4 w-px shrink-0 bg-gray-800/90 xl:block" aria-hidden />
 
                     <DropdownMenu>
                         <DropdownMenuTrigger
@@ -62,7 +62,7 @@ export function DepthControls() {
                                 <Button
                                     type="button"
                                     variant="outline"
-                                    className={cn(toolbarBtn, 'min-w-28 justify-between gap-2 sm:min-w-32')}
+                                    className={cn(toolbarBtn, 'min-w-0 flex-1 justify-between gap-2 sm:min-w-32 sm:flex-none')}
                                 >
                                     <span className="flex min-w-0 items-center gap-1.5">
                                         <span className="flex shrink-0 -space-x-1.5">
@@ -70,14 +70,14 @@ export function DepthControls() {
                                                 <VenueLogo
                                                     key={id}
                                                     venueId={id}
-                                                    size="sm"
+                                                    size="md"
                                                     className="ring-2 ring-[#0B0E11]"
                                                 />
                                             ))}
                                         </span>
-                                        <span className="truncate">{venueTriggerLabel(selectedVenues)}</span>
+                                        <span className="truncate text-[12px]">{venueTriggerLabel(selectedVenues)}</span>
                                     </span>
-                                    <ChevronDown className="size-3 shrink-0 text-gray-500" />
+                                    <ChevronDown className="size-3.5 shrink-0 text-gray-500" />
                                 </Button>
                             }
                         />
@@ -90,7 +90,7 @@ export function DepthControls() {
                                     key={id}
                                     checked={selectedVenues.includes(id)}
                                     onCheckedChange={() => toggleVenue(id)}
-                                    className="cursor-pointer rounded font-mono text-[10px] text-gray-200 focus:bg-white/6"
+                                    className="cursor-pointer rounded text-[12px] text-gray-200 focus:bg-white/6"
                                 >
                                     <span className="flex min-w-0 flex-1 items-center gap-2">
                                         <VenueLogo venueId={id} size="md" />
@@ -105,14 +105,14 @@ export function DepthControls() {
 
                     {selectedVenues.length > 0 ? (
                         <div
-                            className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 border-l border-gray-800/90 pl-2 sm:gap-x-2.5 sm:pl-3 lg:gap-x-3"
+                            className="hidden min-w-0 flex-wrap items-center gap-x-2 gap-y-1 border-l border-gray-800/90 pl-2 sm:flex sm:gap-x-2.5 sm:pl-3 lg:gap-x-3"
                             role="group"
                             aria-label="Depth bar colors: left chip is bid, right chip is ask per venue"
                         >
                             {selectedVenues.map((id) => (
                                 <span key={id} className="flex overflow-hidden rounded" aria-hidden>
-                                    <span className="h-2 w-2" style={{ backgroundColor: VENUE_DEPTH_HEX[id].bid }} />
-                                    <span className="h-2 w-2" style={{ backgroundColor: VENUE_DEPTH_HEX[id].ask }} />
+                                    <span className="h-3 w-3" style={{ backgroundColor: VENUE_DEPTH_HEX[id].bid }} />
+                                    <span className="h-3 w-3" style={{ backgroundColor: VENUE_DEPTH_HEX[id].ask }} />
                                 </span>
                             ))}
                             <span className="sr-only">
@@ -133,24 +133,24 @@ export function DepthControls() {
                                 <Button
                                     type="button"
                                     variant="outline"
-                                    className={cn(toolbarBtn, 'min-w-28 justify-between gap-2 sm:min-w-30')}
+                                    className={cn(toolbarBtn, 'min-w-0 flex-1 justify-between gap-3 sm:min-w-30 sm:flex-none')}
                                 >
-                                    <span className="flex items-baseline gap-1.5 truncate">
+                                    <span className="flex items-baseline gap-1.5 truncate  text-[12px]">
                                         <span className="text-gray-500">Levels</span>
                                         <span className="tabular-nums text-gray-200">{depthLevels}</span>
                                     </span>
-                                    <ChevronDown className="size-3 shrink-0 text-gray-500" />
+                                    <ChevronDown className="size-3.5 shrink-0 text-gray-500" />
                                 </Button>
                             }
                         />
                         <DropdownMenuContent
                             align="start"
-                            className="border-[#2B3139] bg-[#141920] p-1 shadow-xl"
+                            className="border-[#2B3139] bg-[#141920] p-2 shadow-xl"
                         >
                             {depthOptions.map((opt) => (
                                 <DropdownMenuItem
                                     key={opt}
-                                    className="flex cursor-pointer items-center justify-between gap-3 font-mono text-[10px] text-gray-200 focus:bg-white/6"
+                                    className="flex cursor-pointer items-center justify-between gap-3 font-mono text-[12px] text-gray-200 focus:bg-white/6"
                                     onClick={() => setDepthLevels(opt)}
                                 >
                                     <span>{opt} levels</span>
@@ -163,7 +163,7 @@ export function DepthControls() {
                     </DropdownMenu>
                 </div>
 
-                <div className="flex shrink-0 items-center sm:pl-1">
+                <div className="flex w-full items-center sm:w-auto xl:pl-1">
                     <ToggleGroup
                         value={[displayMode] as readonly string[]}
                         size="sm"
@@ -172,25 +172,25 @@ export function DepthControls() {
                             if (mode === 'aggregated' || mode === 'split') setDisplayMode(mode);
                         }}
                         spacing={0}
-                        className={toggleStrip}
+                        className={cn(toggleStrip, 'w-full sm:w-auto')}
                     >
                         <ToggleGroupItem
                             value="aggregated"
                             aria-label="Aggregated"
                             className={cn(
                                 toggleItem,
-                                'flex items-center justify-center gap-0.5 px-1.5 text-[9px]',
+                                'flex flex-1 items-center justify-center gap-0.5 px-1.5 sm:flex-none',
                             )}
                         >
-                            <LayoutGrid className="size-2.5 shrink-0 opacity-90" aria-hidden />
+                            <LayoutGrid className="size-3 shrink-0 opacity-90" aria-hidden />
                             Aggregated
                         </ToggleGroupItem>
                         <ToggleGroupItem
                             value="split"
                             aria-label="Split"
-                            className={cn(toggleItem, 'flex items-center justify-center gap-0.5 px-2 text-[9px]')}
+                            className={cn(toggleItem, 'flex flex-1 items-center justify-center gap-0.5 px-2 sm:flex-none')}
                         >
-                            <Columns className="size-2.5 shrink-0 opacity-90" aria-hidden />
+                            <Columns className="size-3 shrink-0 opacity-90" aria-hidden />
                             Split
                         </ToggleGroupItem>
                     </ToggleGroup>

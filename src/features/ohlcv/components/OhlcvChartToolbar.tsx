@@ -47,20 +47,20 @@ export function OhlcvChartToolbar() {
     const chartModeArr = [chartMode] as string[];
 
     return (
-        <header className="shrink-0 border-b border-[#1E2329] bg-[#0B0E11] px-2 py-1.5 sm:px-3">
-            <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1.5">
+        <header className="shrink-0 border-b border-[#1E2329] bg-[#0B0E11] px-2 py-2 sm:px-3 xl:py-1.5">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 {/* ── Left cluster ── */}
-                <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1.5 sm:gap-x-3">
+                <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-2 sm:flex-nowrap sm:gap-x-3 sm:gap-y-1.5">
 
                     {/* Label pill */}
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex basis-full items-center gap-1.5 sm:basis-auto">
                         <div className="h-3 w-0.5 shrink-0 rounded-full bg-[#F0B90B]/80" aria-hidden />
-                        <span className="font-mono text-[10px] font-medium tracking-wide text-gray-500">
+                        <span className="font-mono text-[11px] font-medium tracking-wide text-gray-500 sm:text-[14px]">
                             Chart
                         </span>
                     </div>
 
-                    <div className="hidden h-4 w-px shrink-0 bg-gray-800/90 sm:block" aria-hidden />
+                    <div className="hidden h-4 w-px shrink-0 bg-gray-800/90 xl:block" aria-hidden />
 
                     {/* Candle venue dropdown */}
                     {chartMode === 'candles' && (
@@ -170,7 +170,7 @@ export function OhlcvChartToolbar() {
                             }
                         }}
                         spacing={0}
-                        className={toggleStrip}
+                        className={cn(toggleStrip, 'ml-auto sm:ml-0')}
                     >
                         {timeframes.map((tf) => (
                             <ToggleGroupItem
@@ -186,7 +186,7 @@ export function OhlcvChartToolbar() {
                 </div>
 
                 {/* ── Right cluster: chart-mode toggles ── */}
-                <div className="flex shrink-0 items-center sm:pl-1">
+                <div className="flex w-full items-center sm:w-auto xl:pl-1">
                     <ToggleGroup
                         value={chartModeArr}
                         onValueChange={(val) => {
@@ -194,22 +194,22 @@ export function OhlcvChartToolbar() {
                             if (next === 'candles' || next === 'compare') setChartMode(next);
                         }}
                         spacing={0}
-                        className={toggleStrip}
+                        className={cn(toggleStrip, 'w-full sm:w-auto')}
                     >
                         <ToggleGroupItem
                             value="candles"
                             aria-label="Candles"
-                            className={cn(toggleItem, 'flex items-center justify-center gap-0.5 px-2.5')}
+                            className={cn(toggleItem, 'flex flex-1 items-center justify-center gap-0.5 px-2.5 sm:flex-none')}
                         >
-                            <BarChart3 className="size-2.5 opacity-90" aria-hidden />
+                            <BarChart3 className="size-3 opacity-90" aria-hidden />
                             Candles
                         </ToggleGroupItem>
                         <ToggleGroupItem
                             value="compare"
                             aria-label="Compare venues"
-                            className={cn(toggleItem, 'flex items-center justify-center gap-0.5 px-2.5')}
+                            className={cn(toggleItem, 'flex flex-1 items-center justify-center gap-0.5 px-2.5 sm:flex-none')}
                         >
-                            <GitCompare className="size-2.5 opacity-90" aria-hidden />
+                            <GitCompare className="size-3 opacity-90" aria-hidden />
                             Compare
                         </ToggleGroupItem>
                     </ToggleGroup>

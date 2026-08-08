@@ -27,6 +27,8 @@ export type UseOhlcvChartOptions = {
    * incremental-update 5m bars onto 15m state (or HL onto Lighter) in lightweight-charts.
    */
   chartResetKey: string;
+  drawingTool: "cursor" | "horizontal-line";
+  drawingAction: { type: "clear" | "reset"; id: number } | null;
 };
 
 const ALL_VENUES: CompareVenueKey[] = [
@@ -66,6 +68,12 @@ export function useOhlcvChart(
     },
   );
   const prevChartResetKeyRef = useRef<string | undefined>(undefined);
+  const drawingToolRef = useRef(options.drawingTool);
+  const handledDrawingActionRef = useRef<number | null>(null);
+
+  useLayoutEffect(() => {
+    drawingToolRef.current = options.drawingTool;
+  }, [options.drawingTool]);
 
   useLayoutEffect(() => {
     if (
@@ -96,6 +104,10 @@ export function useOhlcvChart(
       candleBars,
       compareSeries,
       onCompareLineHover,
+      onCandleClick: (price) => {
+        if (drawingToolRef.current !== "horizontal-line") return;
+        bundleRef.current?.addHorizontalLine(price);
+      },
     });
 
     bundleRef.current = bundle;
@@ -131,4 +143,11 @@ export function useOhlcvChart(
       compareSeries,
     );
   }, [chartMode, compareVenues, candleBars, compareSeries, chartResetKey]);
+
+  useEffect(() => {
+    if (!options.drawingAction || options.drawingAction.id === handledDrawingActionRef.current) return;
+    handledDrawingActionRef.current = options.drawingAction.id;
+    if (options.drawingAction.type === "clear") bundleRef.current?.clearHorizontalLines();
+    if (options.drawingAction.type === "reset") bundleRef.current?.chart.timeScale().fitContent();
+  }, [options.drawingAction]);
 }
